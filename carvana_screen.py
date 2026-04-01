@@ -1,5 +1,5 @@
-﻿import xml.etree.ElementTree as ET
-from datetime import datetime
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 from typing import Any
 
 import pandas as pd
@@ -7,14 +7,17 @@ import plotly.express as px
 import plotly.graph_objects as go
 import requests
 import streamlit as st
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 APP_TITLE = "Carvana Live Data Dashboard"
 APP_SUBTITLE = (
     "Live monitoring dashboard for Carvana (CVNA) built on official SEC EDGAR filings "
-    "and the U.S. Bureau of Labor Statistics used-car CPI series."
+    "with optional on-demand macro and insider detail loaders."
 )
 TICKER = "CVNA"
 COMPANY_NAME = "Carvana Co."
+COMPANY_CIK = "0001690820"
 SEC_BASE = "https://www.sec.gov"
 SEC_DATA_BASE = "https://data.sec.gov"
 BLS_SERIES_ID = "CUUR0000SETA02"
@@ -22,6 +25,23 @@ DEFAULT_SEC_USER_AGENT = "carvana-dashboard/1.0 contact@example.com"
 REQUEST_TIMEOUT = 30
 
 st.set_page_config(page_title=APP_TITLE, layout="wide", page_icon=":bar_chart:")
+
+
+def build_session() -> requests.Session:
+    session = requests.Session()
+    retry = Retry(
+        total=2,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"],
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+SESSION = build_session()
 
 
 def get_sec_user_agent() -> str:
@@ -33,13 +53,13 @@ def get_sec_user_agent() -> str:
 
 
 def fetch_json(url: str, headers: dict[str, str] | None = None) -> Any:
-    response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+    response = SESSION.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.json()
 
 
 def fetch_text(url: str, headers: dict[str, str] | None = None) -> str:
-    response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+    response = SESSION.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.text
 
@@ -49,15 +69,6 @@ def sec_headers() -> dict[str, str]:
         "User-Agent": get_sec_user_agent(),
         "Accept-Encoding": "gzip, deflate",
     }
-
-
-@st.cache_data(ttl=60 * 60 * 12)
-def get_company_cik(ticker: str) -> str:
-    data = fetch_json(f"{SEC_BASE}/files/company_tickers.json", headers=sec_headers())
-    for item in data.values():
-        if item["ticker"].upper() == ticker.upper():
-            return str(item["cik_str"]).zfill(10)
-    raise ValueError(f"Could not find CIK for ticker {ticker}.")
 
 
 @st.cache_data(ttl=60 * 60)
@@ -200,7 +211,7 @@ def text_at(parent: ET.Element | None, path: str) -> str:
 
 
 @st.cache_data(ttl=60 * 60)
-def get_recent_form4_transactions(cik: str, submissions: dict[str, Any], max_forms: int = 8) -> pd.DataFrame:
+def get_recent_form4_transactions(cik: str, submissions: dict[str, Any], max_forms: int = 3) -> pd.DataFrame:
     recent = submissions["filings"]["recent"]
     form_indices = [idx for idx, form in enumerate(recent["form"]) if form in {"4", "4/A"}][:max_forms]
     rows: list[dict[str, Any]] = []
@@ -265,21 +276,16 @@ def get_recent_form4_transactions(cik: str, submissions: dict[str, Any], max_for
     return pd.DataFrame(rows).sort_values(["Date", "Filing Date"], ascending=[True, True]).reset_index(drop=True)
 
 
-def load_dashboard_data() -> dict[str, Any]:
-    cik = get_company_cik(TICKER)
-    submissions = get_company_submissions(cik)
-    company_facts = get_company_facts(cik)
+def load_core_dashboard_data() -> dict[str, Any]:
+    submissions = get_company_submissions(COMPANY_CIK)
+    company_facts = get_company_facts(COMPANY_CIK)
     fundamentals = build_fundamentals_frame(company_facts)
     filings = build_recent_filings(submissions)
-    insider_trades = get_recent_form4_transactions(cik, submissions)
-    used_car_cpi = get_used_car_cpi()
     return {
-        "cik": cik,
+        "cik": COMPANY_CIK,
         "submissions": submissions,
         "fundamentals": fundamentals,
         "filings": filings,
-        "insider_trades": insider_trades,
-        "used_car_cpi": used_car_cpi,
     }
 
 
@@ -300,29 +306,26 @@ if get_sec_user_agent() == DEFAULT_SEC_USER_AGENT:
         "`your-app-name/1.0 your-email@example.com`."
     )
 
-with st.spinner("Loading live SEC and BLS data..."):
+with st.spinner("Loading live SEC data..."):
     try:
-        dashboard = load_dashboard_data()
+        dashboard = load_core_dashboard_data()
         load_error = None
     except Exception as exc:
         dashboard = None
         load_error = exc
 
 if load_error:
-    st.error(f"Live data load failed: {load_error}")
+    st.error(f"Core SEC data load failed: {load_error}")
     st.stop()
 
 fundamentals_df = dashboard["fundamentals"]
 filings_df = dashboard["filings"]
-insider_df = dashboard["insider_trades"]
-used_car_df = dashboard["used_car_cpi"]
 
 latest_revenue = latest_metric_value(fundamentals_df, "Revenue")
 latest_gross_profit = latest_metric_value(fundamentals_df, "Gross Profit")
 latest_operating_income = latest_metric_value(fundamentals_df, "Operating Income")
 recent_form4_count = int((filings_df["Form"] == "4").sum() + (filings_df["Form"] == "4/A").sum())
-latest_cpi = float(used_car_df.iloc[-1]["Index"])
-prior_cpi = float(used_car_df.iloc[-2]["Index"])
+latest_filing_date = filings_df["Filing Date"].max().date()
 
 metric_1, metric_2, metric_3, metric_4 = st.columns(4)
 metric_1.metric(
@@ -337,11 +340,7 @@ metric_3.metric(
     "Latest operating income",
     format_billions(latest_operating_income) if latest_operating_income is not None else "N/A",
 )
-metric_4.metric(
-    "Used-car CPI",
-    f"{latest_cpi:.3f}",
-    delta=f"{latest_cpi - prior_cpi:+.3f} MoM",
-)
+metric_4.metric("Latest SEC filing", str(latest_filing_date))
 
 st.subheader("Live Signal Summary")
 signal_1, signal_2, signal_3 = st.columns(3)
@@ -360,11 +359,12 @@ with signal_2:
         st.info(f"Recent issuer filing history includes {recent_form4_count} Form 4 filings.")
 
 with signal_3:
-    cpi_change = latest_cpi - prior_cpi
-    if cpi_change > 0:
-        st.success(f"Used-car CPI rose by {cpi_change:.3f} month over month.")
+    core_forms = filings_df[filings_df["Form"].isin(["10-K", "10-Q", "8-K"])]
+    if core_forms.empty:
+        st.warning("No recent 10-K, 10-Q, or 8-K filings were found in the latest issuer feed window.")
     else:
-        st.error(f"Used-car CPI fell by {abs(cpi_change):.3f} month over month.")
+        latest_core = core_forms.sort_values("Filing Date", ascending=False).iloc[0]
+        st.success(f"Latest core filing: {latest_core['Form']} on {latest_core['Filing Date'].date()}.")
 
 st.markdown("---")
 
@@ -393,7 +393,7 @@ with tab_1:
     )
     fundamentals_chart.update_yaxes(title="USD")
     fundamentals_chart.update_layout(hovermode="x unified")
-    st.plotly_chart(fundamentals_chart, use_container_width=True)
+    st.plotly_chart(fundamentals_chart, width="stretch")
 
     display_fundamentals = fundamentals_df.copy()
     display_fundamentals["Value"] = display_fundamentals["Value"].map(format_billions)
@@ -401,7 +401,7 @@ with tab_1:
     display_fundamentals["Filed"] = display_fundamentals["Filed"].dt.date
     st.dataframe(
         display_fundamentals.sort_values(["Date", "Metric"], ascending=[False, True]),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -413,98 +413,115 @@ with tab_2:
     )
     filings_display = filings_df.copy()
     filings_display["Filing Date"] = filings_display["Filing Date"].dt.date
-    st.dataframe(filings_display, use_container_width=True, hide_index=True)
+    st.dataframe(filings_display, width="stretch", hide_index=True)
 
     form_mix = filings_df["Form"].value_counts().reset_index()
     form_mix.columns = ["Form", "Count"]
     filings_bar = px.bar(form_mix, x="Form", y="Count", title="Recent filing mix")
-    st.plotly_chart(filings_bar, use_container_width=True)
+    st.plotly_chart(filings_bar, width="stretch")
 
 with tab_3:
     st.markdown("### Recent Form 4 transactions")
     st.write(
-        "Form 4 filings are pulled from EDGAR and parsed from the raw XML ownership documents. "
-        "Share counts are signed positive for acquisitions and negative for disposals."
+        "Detailed Form 4 parsing is loaded on demand because it requires fetching raw XML filings in "
+        "addition to the core SEC submissions feed."
     )
-    if insider_df.empty:
-        st.info("No recent Form 4 transactions were parsed from the issuer submissions feed.")
+    load_insiders = st.toggle("Load detailed Form 4 transactions", value=False)
+    if not load_insiders:
+        st.info("Enable the toggle above to fetch and parse recent raw Form 4 XML filings.")
     else:
-        insider_chart = px.bar(
-            insider_df,
-            x="Date",
-            y="Signed Shares",
-            color="Action",
-            hover_data=["Owner", "Code", "Price", "Estimated Value"],
-            title="Signed insider share activity",
-        )
-        insider_chart.update_yaxes(title="Signed shares")
-        st.plotly_chart(insider_chart, use_container_width=True)
+        try:
+            insider_df = get_recent_form4_transactions(COMPANY_CIK, dashboard["submissions"])
+            if insider_df.empty:
+                st.info("No recent Form 4 transactions were parsed from the issuer submissions feed.")
+            else:
+                insider_chart = px.bar(
+                    insider_df,
+                    x="Date",
+                    y="Signed Shares",
+                    color="Action",
+                    hover_data=["Owner", "Code", "Price", "Estimated Value"],
+                    title="Signed insider share activity",
+                )
+                insider_chart.update_yaxes(title="Signed shares")
+                st.plotly_chart(insider_chart, width="stretch")
 
-        insider_display = insider_df.copy()
-        insider_display["Date"] = insider_display["Date"].dt.date
-        insider_display["Filing Date"] = insider_display["Filing Date"].dt.date
-        insider_display["Estimated Value"] = insider_display["Estimated Value"].map(
-            lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A"
-        )
-        insider_display["Price"] = insider_display["Price"].map(lambda x: f"${x:,.2f}" if x else "N/A")
-        insider_display["Shares"] = insider_display["Shares"].map(lambda x: f"{x:,.0f}")
-        insider_display["Signed Shares"] = insider_display["Signed Shares"].map(lambda x: f"{x:,.0f}")
-        st.dataframe(
-            insider_display[
-                [
-                    "Date",
-                    "Owner",
-                    "Action",
-                    "Code",
-                    "Shares",
-                    "Signed Shares",
-                    "Price",
-                    "Estimated Value",
-                    "XML URL",
-                ]
-            ].sort_values("Date", ascending=False),
-            use_container_width=True,
-            hide_index=True,
-        )
+                insider_display = insider_df.copy()
+                insider_display["Date"] = insider_display["Date"].dt.date
+                insider_display["Filing Date"] = insider_display["Filing Date"].dt.date
+                insider_display["Estimated Value"] = insider_display["Estimated Value"].map(
+                    lambda x: f"${x:,.0f}" if pd.notna(x) else "N/A"
+                )
+                insider_display["Price"] = insider_display["Price"].map(lambda x: f"${x:,.2f}" if x else "N/A")
+                insider_display["Shares"] = insider_display["Shares"].map(lambda x: f"{x:,.0f}")
+                insider_display["Signed Shares"] = insider_display["Signed Shares"].map(lambda x: f"{x:,.0f}")
+                st.dataframe(
+                    insider_display[
+                        [
+                            "Date",
+                            "Owner",
+                            "Action",
+                            "Code",
+                            "Shares",
+                            "Signed Shares",
+                            "Price",
+                            "Estimated Value",
+                            "XML URL",
+                        ]
+                    ].sort_values("Date", ascending=False),
+                    width="stretch",
+                    hide_index=True,
+                )
+        except Exception as exc:
+            st.error(f"Detailed Form 4 load failed: {exc}")
 
 with tab_4:
     st.markdown("### U.S. used cars and trucks CPI")
     st.write(
         "This macro backdrop uses the BLS CPI series `CUUR0000SETA02` for used cars and trucks. "
-        "It is not the Manheim index, but it is an official public proxy for used-vehicle pricing."
+        "It is loaded on demand because third-party government endpoints can be slower or less stable "
+        "than the SEC feed in some environments."
     )
-    used_car_chart = go.Figure()
-    used_car_chart.add_trace(
-        go.Scatter(
-            x=used_car_df["Date"],
-            y=used_car_df["Index"],
-            mode="lines+markers",
-            name="Used cars and trucks CPI",
-            line=dict(color="#17a2b8", width=3),
-        )
-    )
-    used_car_chart.update_layout(
-        title="BLS used cars and trucks CPI",
-        yaxis_title="Index",
-        hovermode="x unified",
-    )
-    st.plotly_chart(used_car_chart, use_container_width=True)
+    load_macro = st.toggle("Load BLS used-car CPI", value=False)
+    if not load_macro:
+        st.info("Enable the toggle above to fetch the BLS used cars and trucks CPI series.")
+    else:
+        try:
+            used_car_df = get_used_car_cpi()
+            used_car_chart = go.Figure()
+            used_car_chart.add_trace(
+                go.Scatter(
+                    x=used_car_df["Date"],
+                    y=used_car_df["Index"],
+                    mode="lines+markers",
+                    name="Used cars and trucks CPI",
+                    line=dict(color="#17a2b8", width=3),
+                )
+            )
+            used_car_chart.update_layout(
+                title="BLS used cars and trucks CPI",
+                yaxis_title="Index",
+                hovermode="x unified",
+            )
+            st.plotly_chart(used_car_chart, width="stretch")
 
-    used_car_display = used_car_df.copy()
-    used_car_display["Date"] = used_car_display["Date"].dt.date
-    st.dataframe(used_car_display.sort_values("Date", ascending=False), use_container_width=True, hide_index=True)
+            used_car_display = used_car_df.copy()
+            used_car_display["Date"] = used_car_display["Date"].dt.date
+            st.dataframe(used_car_display.sort_values("Date", ascending=False), width="stretch", hide_index=True)
+        except Exception as exc:
+            st.error(f"BLS load failed: {exc}")
 
 with st.sidebar:
     st.header("Source Notes")
     st.markdown(f"**Company:** {COMPANY_NAME}")
     st.markdown(f"**Ticker:** {TICKER}")
-    st.markdown(f"**CIK:** {dashboard['cik']}")
-    st.markdown(f"**Data refresh time:** {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}")
+    st.markdown(f"**CIK:** {int(COMPANY_CIK)}")
+    st.markdown(f"**Data refresh time:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     st.markdown("---")
-    st.markdown("**Live sources in this app:**")
-    st.markdown("- SEC EDGAR `company_tickers.json`")
+    st.markdown("**Default live sources on page load:**")
     st.markdown("- SEC EDGAR submissions JSON")
     st.markdown("- SEC XBRL company facts JSON")
+    st.markdown("**Optional on-demand sources:**")
     st.markdown("- SEC Form 4 raw XML filings")
     st.markdown("- BLS Public Data API v2")
 
