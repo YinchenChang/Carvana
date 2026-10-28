@@ -1,0 +1,1546 @@
+{
+ "company": "Carvana",
+ "ticker": "CVNA",
+ "thesis": "@README!A2",
+ "question": "信用循環轉差時，Carvana 能否不靠新股與新債維持收支平衡？債務對 EBITDA 會不會越過評等門檻？",
+ "scenarios": [
+  {
+   "key": "A",
+   "name": "情境 A（樂觀）"
+  },
+  {
+   "key": "B",
+   "name": "情境 B（基準）"
+  },
+  {
+   "key": "C",
+   "name": "情境 C（信用壓力）"
+  }
+ ],
+ "sections": [
+  {
+   "id": "thesis",
+   "title": "命題與核心問題",
+   "blocks": [
+    {
+     "type": "kv",
+     "items": [
+      [
+       "@Val!A94",
+       "@Val!C94"
+      ],
+      [
+       "@Val!A85",
+       "@Val!C85|n2"
+      ],
+      [
+       "@Val!A86",
+       "@Val!C86|n2"
+      ],
+      [
+       "@Val!A87",
+       "@Val!C87|sp1"
+      ],
+      [
+       "@Val!A82",
+       "@Val!C82|p1"
+      ],
+      [
+       "@Val!A8",
+       "@Val!C8|p1"
+      ],
+      [
+       "@CF!A4",
+       [
+        "@CF!C4|n0",
+        "／",
+        "@CF!D4|n0",
+        "／",
+        "@CF!E4|n0"
+       ]
+      ]
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "重點觀察"
+    },
+    {
+     "type": "list",
+     "items": [
+      "@README!A5",
+      "@README!A6",
+      "@README!A7",
+      "@README!A8",
+      "@README!A9"
+     ]
+    },
+    {
+     "type": "kv",
+     "items": [
+      [
+       "會計年度與口徑",
+       "@README!A12"
+      ],
+      [
+       "營收分部層",
+       "@README!A13"
+      ],
+      [
+       "與專案既有模型的關係",
+       "@README!A14"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "drivers",
+   "title": "驅動因子 → 推導量（單位經濟）",
+   "blocks": [
+    {
+     "type": "table",
+     "head": [
+      "輸入",
+      "基準值",
+      "標記",
+      "推導量"
+     ],
+     "rows": [
+      [
+       "@In!B8",
+       [
+        "@In!E8|n0",
+        " ",
+        "@In!C8"
+       ],
+       "@In!G8|tag",
+       [
+        "FY2026 零售台數（情境 B）：",
+        "@Thesis!D34|n0"
+       ]
+      ],
+      [
+       "@In!B15",
+       [
+        "@In!E15|p1",
+        " ",
+        "@In!C15"
+       ],
+       "@In!G15|tag",
+       [
+        "FY2027 零售台數（情境 B）：",
+        "@Thesis!E34|n0"
+       ]
+      ],
+      [
+       "@In!B34",
+       [
+        "@In!E34|n0",
+        " ",
+        "@In!C34"
+       ],
+       "@In!G34|tag",
+       [
+        "FY2027 零售毛利（情境 B，百萬美元）：",
+        "@Thesis!E47|n0"
+       ]
+      ],
+      [
+       "@In!B44",
+       [
+        "@In!E44|p2",
+        " ",
+        "@In!C44"
+       ],
+       "@In!G44|tag",
+       [
+        "FY2027 貸款出售利得（情境 B，百萬美元）：",
+        "@Thesis!E44|n0"
+       ]
+      ],
+      [
+       "@In!B46",
+       [
+        "@In!E46|p2",
+        " ",
+        "@In!C46"
+       ],
+       "@In!G46|tag",
+       [
+        "FY2027 貸款出售利得（情境 C，百萬美元）：",
+        "@Thesis!E71|n0"
+       ]
+      ],
+      [
+       "@In!B52",
+       [
+        "@In!E52|n0",
+        " ",
+        "@In!C52"
+       ],
+       "@In!G52|tag",
+       [
+        "FY2027 SG&A 每台（情境 B）：",
+        "@Thesis!E52|n0"
+       ]
+      ],
+      [
+       "@In!B115",
+       [
+        "@In!E115|p1",
+        " ",
+        "@In!C115"
+       ],
+       "@In!G115|tag",
+       [
+        "情境 C 損失傳導（利得率）：",
+        "@Credit!C76|p2"
+       ]
+      ],
+      [
+       "@In!B117",
+       [
+        "@In!E117|p1",
+        " ",
+        "@In!C117"
+       ],
+       "@In!G117|tag",
+       [
+        "情境 C 利差傳導（利得率）：",
+        "@Credit!C77|p2"
+       ]
+      ],
+      [
+       "@In!B109",
+       [
+        "@In!E109|n0",
+        " ",
+        "@In!C109"
+       ],
+       "@In!G109|tag",
+       [
+        "已承諾去化 ÷ FY2027 發放（情境 B）：",
+        "@Credit!E37|p0"
+       ]
+      ]
+     ]
+    },
+    {
+     "type": "table",
+     "caption": "命題模組：零售台數 × 每台單位經濟（情境 B）",
+     "grid": true,
+     "head": [
+      "@Thesis!A32",
+      "@Thesis!B32",
+      "@Thesis!C32",
+      "@Thesis!D32",
+      "@Thesis!E32",
+      "@Thesis!F32",
+      "@Thesis!G32",
+      "@Thesis!H32",
+      "@Thesis!I32"
+     ],
+     "rowgen": {
+      "sheet": "Thesis",
+      "rows": "33-55",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0"
+      ],
+      "row_fmt": {
+       "33": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "43": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Thesis!A1"
+     ]
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Thesis!A2"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pl",
+   "title": "三情境損益、收支平衡與信用風險",
+   "blocks": [
+    {
+     "type": "pl",
+     "years": "@PL!D3:I3",
+     "metrics": [
+      {
+       "name": "零售台數（輛）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@Thesis!D7:I7",
+        "B": "@Thesis!D34:I34",
+        "C": "@Thesis!D61:I61"
+       },
+       "chart": true
+      },
+      {
+       "name": "合併營收（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@PL!D14:I14",
+        "B": "@PL!D43:I43",
+        "C": "@PL!D72:I72"
+       }
+      },
+      {
+       "name": "總毛利每台（美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@Thesis!D23:I23",
+        "B": "@Thesis!D50:I50",
+        "C": "@Thesis!D77:I77"
+       }
+      },
+      {
+       "name": "貸款出售利得（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@PL!D12:I12",
+        "B": "@PL!D41:I41",
+        "C": "@PL!D70:I70"
+       },
+       "chart": true
+      },
+      {
+       "name": "調整後 EBITDA（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@PL!D33:I33",
+        "B": "@PL!D62:I62",
+        "C": "@PL!D91:I91"
+       },
+       "chart": true
+      },
+      {
+       "name": "調整後 EBITDA 率",
+       "fmt": "p1",
+       "rows": {
+        "A": "@PL!D34:I34",
+        "B": "@PL!D63:I63",
+        "C": "@PL!D92:I92"
+       }
+      },
+      {
+       "name": "貸款出售利得 ÷ 調整後 EBITDA",
+       "fmt": "p1",
+       "rows": {
+        "A": "@PL!D35:I35",
+        "B": "@PL!D64:I64",
+        "C": "@PL!D93:I93"
+       }
+      },
+      {
+       "name": "淨利（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@PL!D27:I27",
+        "B": "@PL!D56:I56",
+        "C": "@PL!D85:I85"
+       }
+      },
+      {
+       "name": "每股盈餘（完全轉換股數，美元）",
+       "fmt": "n2",
+       "rows": {
+        "A": "@PL!D29:I29",
+        "B": "@PL!D58:I58",
+        "C": "@PL!D87:I87"
+       }
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "caption": "營收線與損益（情境 B）",
+     "grid": true,
+     "head": [
+      "@PL!A3",
+      "@PL!B3",
+      "@PL!C3",
+      "@PL!D3",
+      "@PL!E3",
+      "@PL!F3",
+      "@PL!G3",
+      "@PL!H3",
+      "@PL!I3"
+     ],
+     "rowgen": {
+      "sheet": "PL",
+      "rows": "38-64",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0"
+      ],
+      "row_fmt": {
+       "44": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "51": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "57": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "63": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "64": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1",
+        "F": "p1",
+        "G": "p1",
+        "H": "p1",
+        "I": "p1"
+       },
+       "58": {
+        "C": "n2",
+        "D": "n2",
+        "E": "n2",
+        "F": "n2",
+        "G": "n2",
+        "H": "n2",
+        "I": "n2"
+       }
+      }
+     }
+    },
+    {
+     "type": "table",
+     "caption": "分部核對（三情境合計絕對差）",
+     "grid": true,
+     "head": [
+      "@PL!A3",
+      "@PL!B3",
+      "@PL!C3",
+      "@PL!D3",
+      "@PL!E3",
+      "@PL!F3",
+      "@PL!G3",
+      "@PL!H3",
+      "@PL!I3"
+     ],
+     "rowgen": {
+      "sheet": "PL",
+      "rows": "5-6",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n1",
+       "n1",
+       "n1",
+       "n1",
+       "n1",
+       "n1",
+       "n1"
+      ]
+     }
+    },
+    {
+     "type": "h3",
+     "text": "收支模組（現金流、債務、收支關卡）"
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@CF!A3",
+      "@CF!C3",
+      "@CF!D3",
+      "@CF!E3"
+     ],
+     "rowgen": {
+      "sheet": "CF",
+      "rows": "4-7",
+      "cols": [
+       "A",
+       "C",
+       "D",
+       "E"
+      ],
+      "fmts": [
+       "",
+       "n0",
+       "n0",
+       "n0"
+      ]
+     }
+    },
+    {
+     "type": "pl",
+     "years": "@PL!D3:I3",
+     "metrics": [
+      {
+       "name": "自由現金流（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@CF!D25:I25",
+        "B": "@CF!D63:I63",
+        "C": "@CF!D101:I101"
+       },
+       "chart": true
+      },
+      {
+       "name": "收支關卡：自由現金流扣 TRA 與到期本金（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@CF!D30:I30",
+        "B": "@CF!D68:I68",
+        "C": "@CF!D106:I106"
+       },
+       "chart": true
+      },
+      {
+       "name": "營運資金變動（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@CF!D21:I21",
+        "B": "@CF!D59:I59",
+        "C": "@CF!D97:I97"
+       }
+      },
+      {
+       "name": "債務合計（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@CF!D46:I46",
+        "B": "@CF!D84:I84",
+        "C": "@CF!D122:I122"
+       }
+      },
+      {
+       "name": "利息費用淨額（百萬美元）",
+       "fmt": "n0",
+       "rows": {
+        "A": "@CF!D47:I47",
+        "B": "@CF!D85:I85",
+        "C": "@CF!D123:I123"
+       }
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "caption": "現金流與債務表（情境 C）",
+     "collapse": true,
+     "summary": "展開：情境 C 的完整現金流與債務表",
+     "grid": true,
+     "head": [
+      "@CF!A89",
+      "@CF!B89",
+      "@CF!D89",
+      "@CF!E89",
+      "@CF!F89",
+      "@CF!G89",
+      "@CF!H89",
+      "@CF!I89"
+     ],
+     "rowgen": {
+      "sheet": "CF",
+      "rows": "90-123",
+      "cols": [
+       "A",
+       "B",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0"
+      ]
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@CF!A1"
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "信用風險：公司債信指標"
+    },
+    {
+     "type": "pl",
+     "years": "@PL!D3:I3",
+     "metrics": [
+      {
+       "name": "債務對調整後 EBITDA（倍）",
+       "fmt": "n2",
+       "rows": {
+        "A": "@Credit!D11:I11",
+        "B": "@Credit!D29:I29",
+        "C": "@Credit!D47:I47"
+       },
+       "chart": true
+      },
+      {
+       "name": "債務對扣除出售利得的 EBITDA（倍）",
+       "fmt": "n2",
+       "rows": {
+        "A": "@Credit!D13:I13",
+        "B": "@Credit!D31:I31",
+        "C": "@Credit!D49:I49"
+       },
+       "chart": true
+      },
+      {
+       "name": "債務加 TRA 對 EBITDA（倍）",
+       "fmt": "n2",
+       "rows": {
+        "A": "@Credit!D14:I14",
+        "B": "@Credit!D32:I32",
+        "C": "@Credit!D50:I50"
+       }
+      },
+      {
+       "name": "自由現金流對債務",
+       "fmt": "p0",
+       "rows": {
+        "A": "@Credit!D16:I16",
+        "B": "@Credit!D34:I34",
+        "C": "@Credit!D52:I52"
+       }
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "caption": "評等門檻檢查（情境 C）",
+     "grid": true,
+     "head": [
+      "@Credit!A3",
+      "@Credit!B3",
+      "@Credit!D3",
+      "@Credit!E3",
+      "@Credit!F3",
+      "@Credit!G3",
+      "@Credit!H3",
+      "@Credit!I3"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "51,53,54",
+      "cols": [
+       "A",
+       "B",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n2",
+       "n2",
+       "n2",
+       "n2",
+       "n2",
+       "n2"
+      ],
+      "row_fmt": {
+       "53": {
+        "D": "",
+        "E": "",
+        "F": "",
+        "G": "",
+        "H": "",
+        "I": ""
+       },
+       "54": {
+        "D": "",
+        "E": "",
+        "F": "",
+        "G": "",
+        "H": "",
+        "I": ""
+       }
+      }
+     }
+    },
+    {
+     "type": "kv",
+     "items": [
+      [
+       "@Credit!A37",
+       [
+        "@Credit!E37|p0",
+        "（情境 B，FY2027）"
+       ]
+      ],
+      [
+       "@Credit!A38",
+       [
+        "@Credit!E38|p0",
+        "（情境 B，FY2027）"
+       ]
+      ],
+      [
+       "@Credit!A39",
+       "@Credit!D39|n1"
+      ],
+      [
+       "@Q!A59",
+       "@Q!C59|n2"
+      ]
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "信用風險：消費信用（管理組合）"
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Credit!A60",
+      "@Credit!B60",
+      "@Credit!C60",
+      "@Credit!D60",
+      "@Credit!E60",
+      "@Credit!F60",
+      "@Credit!G60",
+      "@Credit!H60",
+      "@Credit!I60"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "61-71",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0",
+       "n0"
+      ],
+      "row_fmt": {
+       "66": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       },
+       "67": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       },
+       "68": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       },
+       "69": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       },
+       "70": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       },
+       "71": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2"
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Credit!A59"
+     ]
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Credit!A72"
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "信用風險：出售利得的傳導與資金斷點"
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "項目",
+      "單位",
+      "值"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "75-80",
+      "cols": [
+       "A",
+       "B",
+       "C"
+      ],
+      "fmts": [
+       "",
+       "",
+       "p2"
+      ],
+      "row_fmt": {
+       "79": {
+        "C": "n0"
+       },
+       "80": {
+        "C": "p1"
+       }
+      }
+     }
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Credit!A87",
+      "@Credit!B87",
+      "@Credit!C87",
+      "@Credit!D87"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "83-86,88-92",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0"
+      ],
+      "row_fmt": {
+       "89": {
+        "C": "n1",
+        "D": "n1"
+       },
+       "92": {
+        "C": "n1",
+        "D": "n1"
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Credit!A93"
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "信用風險：盈餘品質、關係人與清償順位"
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Credit!A96",
+      "@Credit!B96",
+      "@Credit!C96",
+      "@Credit!D96",
+      "@Credit!E96",
+      "@Credit!F96",
+      "@Credit!G96",
+      "@Credit!H96",
+      "@Credit!I96",
+      "@Credit!J96",
+      "@Credit!K96"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "97-103",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I",
+       "J",
+       "K"
+      ],
+      "fmts": [
+       "",
+       "",
+       "p1",
+       "p1",
+       "p1",
+       "p1",
+       "p1",
+       "p1",
+       "p1",
+       "p1",
+       "p1"
+      ],
+      "row_fmt": {
+       "99": {
+        "C": "n0",
+        "D": "n0",
+        "E": "n0",
+        "F": "n0",
+        "G": "n0",
+        "H": "n0",
+        "I": "n0",
+        "J": "n0",
+        "K": "n0"
+       },
+       "103": {
+        "K": "n2"
+       },
+       "101": {
+        "C": "p2",
+        "D": "p2",
+        "E": "p2",
+        "F": "p2",
+        "G": "p2",
+        "H": "p2",
+        "I": "p2",
+        "J": "p2",
+        "K": "p2"
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Credit!A104"
+     ]
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Credit!A107",
+      "@Credit!B107",
+      "@Credit!C107",
+      "@Credit!D107",
+      "@Credit!E107"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "108-114",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "p0",
+       "n0"
+      ]
+     }
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Credit!A115",
+      "@Credit!B115",
+      "@Credit!C115",
+      "@Credit!D115",
+      "@Credit!E115"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "116-119",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n0",
+       "n0",
+       "n2"
+      ]
+     }
+    },
+    {
+     "type": "table",
+     "caption": "@Credit!A121",
+     "grid": true,
+     "head": [
+      "@Credit!A122",
+      "@Credit!C122",
+      "@Credit!D122",
+      "@Credit!E122",
+      "@Credit!F122"
+     ],
+     "rowgen": {
+      "sheet": "Credit",
+      "rows": "123-127",
+      "cols": [
+       "A",
+       "C",
+       "D",
+       "E",
+       "F"
+      ],
+      "fmts": [
+       "p1",
+       "n2",
+       "n2",
+       "n2",
+       "n2"
+      ]
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Credit!A2"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "valuation",
+   "title": "估值",
+   "blocks": [
+    {
+     "type": "bars",
+     "title": "目標價與現價",
+     "fmt": "n1",
+     "items": [
+      {
+       "label": "@Val!A85",
+       "value": "@Val!C85",
+       "series": 0
+      },
+      {
+       "label": "情境 A 目標價",
+       "value": "@Val!C77",
+       "series": 1
+      },
+      {
+       "label": "情境 B 目標價",
+       "value": "@Val!D77",
+       "series": 1
+      },
+      {
+       "label": "情境 C 目標價",
+       "value": "@Val!E77",
+       "series": 2
+      },
+      {
+       "label": "@Val!A90",
+       "value": "@Val!C90",
+       "series": 1
+      }
+     ],
+     "ref": {
+      "label": "@Val!A86",
+      "value": "@Val!C86"
+     }
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Val!A74",
+      "@Val!C74",
+      "@Val!D74",
+      "@Val!E74"
+     ],
+     "rowgen": {
+      "sheet": "Val",
+      "rows": "75-81",
+      "cols": [
+       "A",
+       "C",
+       "D",
+       "E"
+      ],
+      "fmts": [
+       "",
+       "n2",
+       "n2",
+       "n2"
+      ],
+      "row_fmt": {
+       "78": {
+        "C": "p0",
+        "D": "p0",
+        "E": "p0"
+       },
+       "79": {
+        "C": "n1",
+        "D": "n1",
+        "E": "n1"
+       },
+       "80": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1"
+       },
+       "81": {
+        "C": "p0",
+        "D": "p0",
+        "E": "p0"
+       }
+      }
+     }
+    },
+    {
+     "type": "kv",
+     "items": [
+      [
+       "@Val!A5",
+       "@Val!C5|p2"
+      ],
+      [
+       "@Val!A8",
+       "@Val!C8|p2"
+      ],
+      [
+       "@Val!A11",
+       "@Val!C11|n2"
+      ],
+      [
+       "@Val!A12",
+       "@Val!C12|n2"
+      ],
+      [
+       "@Val!A14",
+       "@Val!C14|n1"
+      ],
+      [
+       "@Val!A82",
+       "@Val!C82|p1"
+      ]
+     ]
+    },
+    {
+     "type": "table",
+     "grid": true,
+     "head": [
+      "@Val!A84",
+      "@Val!C84",
+      "@Val!E84"
+     ],
+     "rowgen": {
+      "sheet": "Val",
+      "rows": "85-94",
+      "cols": [
+       "A",
+       "C",
+       "E"
+      ],
+      "fmts": [
+       "",
+       "n2",
+       ""
+      ],
+      "row_fmt": {
+       "87": {
+        "C": "sp1"
+       },
+       "91": {
+        "C": "n0"
+       },
+       "92": {
+        "C": "n0"
+       },
+       "93": {
+        "C": "n0"
+       },
+       "94": {
+        "C": ""
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Val!A1"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "recon",
+   "title": "對帳：公司指引、共識、評等機構、放空報告",
+   "blocks": [
+    {
+     "type": "table",
+     "head": [
+      "@Recon!A3",
+      "@Recon!B3",
+      "@Recon!C3",
+      "@Recon!D3",
+      "@Recon!E3",
+      "@Recon!F3",
+      "@Recon!G3"
+     ],
+     "rowgen": {
+      "sheet": "Recon",
+      "rows": "4-13",
+      "cols": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G"
+      ],
+      "fmts": [
+       "",
+       "",
+       "n2",
+       "n2",
+       "n2",
+       "",
+       "tag"
+      ],
+      "row_fmt": {
+       "4": {
+        "C": "n0",
+        "D": "n0",
+        "E": "n0"
+       },
+       "5": {
+        "C": "n0",
+        "D": "n0",
+        "E": "n0"
+       },
+       "6": {
+        "C": "n0",
+        "D": "n0",
+        "E": "n0"
+       },
+       "7": {
+        "C": "n0",
+        "D": "n0",
+        "E": "n0"
+       },
+       "11": {
+        "C": "p1",
+        "D": "p1",
+        "E": "p1"
+       }
+      }
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Recon!A15"
+     ]
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Recon!A1"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sens",
+   "title": "敏感度",
+   "blocks": [
+    {
+     "type": "tornado",
+     "title": "加權目標價相對基準：輸入取低值",
+     "sheet": "Sens",
+     "rows": "4-31",
+     "label_col": "A",
+     "value_col": "F",
+     "fmt": "sp1"
+    },
+    {
+     "type": "tornado",
+     "title": "加權目標價相對基準：輸入取高值",
+     "sheet": "Sens",
+     "rows": "4-31",
+     "label_col": "A",
+     "value_col": "G",
+     "fmt": "sp1"
+    },
+    {
+     "type": "table",
+     "collapse": true,
+     "summary": "展開：全部案例（含情境 B 債務對 EBITDA、情境 C 收支關卡）",
+     "grid": true,
+     "head": [
+      "@Sens!A3",
+      "@Sens!C3",
+      "@Sens!D3",
+      "@Sens!F3",
+      "@Sens!G3",
+      "@Sens!H3",
+      "@Sens!I3",
+      "@Sens!J3",
+      "@Sens!K3"
+     ],
+     "rowgen": {
+      "sheet": "Sens",
+      "rows": "4-31",
+      "cols": [
+       "A",
+       "C",
+       "D",
+       "F",
+       "G",
+       "H",
+       "I",
+       "J",
+       "K"
+      ],
+      "fmts": [
+       "",
+       "g",
+       "g",
+       "sp1",
+       "sp1",
+       "n2",
+       "n2",
+       "n0",
+       "n0"
+      ]
+     }
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@Sens!A1"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "status",
+   "title": "資料狀態",
+   "blocks": [
+    {
+     "type": "kv",
+     "items": [
+      [
+       "模型版本",
+       [
+        "$version",
+        "（",
+        "$date",
+        "）"
+       ]
+      ],
+      [
+       "來源 xlsx",
+       "$xlsx"
+      ],
+      [
+       "來源 xlsx 的雜湊指紋",
+       "$sha"
+      ]
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "已知限制"
+    },
+    {
+     "type": "note",
+     "parts": [
+      "@README!A17"
+     ]
+    },
+    {
+     "type": "h3",
+     "text": "「未找到」清單"
+    },
+    {
+     "type": "scan",
+     "needle": "未找到",
+     "collapse": true,
+     "summary": "展開：標為「未找到」的輸入與來源",
+     "sheets": {
+      "In": [
+       "B"
+      ],
+      "Recon": [
+       "A"
+      ]
+     },
+     "empty": "沒有標為未找到的項目。"
+    }
+   ]
+  }
+ ]
+}

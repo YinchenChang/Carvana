@@ -47,3 +47,6 @@ SEC_USER_AGENT = "carvana-dashboard/1.0 your-email@example.com"
 - The hosted environment is Linux, so use forward slashes in paths if you add local files later.
 - This app currently uses official SEC EDGAR and BLS endpoints for live data.
 - If you add API keys or credentials later, store them in Community Cloud `Secrets`, not in the repository.
+
+## 個股模型（`model/`）
+Carvana 個股模型（Excel＋HTML；命題＋營收線＋收支平衡＋信用風險），說明見 `model/README.md`。
