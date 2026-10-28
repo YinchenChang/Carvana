@@ -1,10 +1,10 @@
-# 由建置列號對照（data/rowmap_v02.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
+# 由建置列號對照（data/rowmap_v03.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
 # 設定檔文字不得含阿拉伯數字（年度、日期除外）；所有數字以儲存格參照取自 xlsx。
 import json, os
 from openpyxl.utils import get_column_letter
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RM = json.load(open(os.path.join(HERE, "data", "rowmap_v02.json"), encoding="utf-8"))
+RM = json.load(open(os.path.join(HERE, "data", "rowmap_v03.json"), encoding="utf-8"))
 R, P, C = RM["R"], RM["P"], RM["C"]
 IN = RM["ROWMAP"]["In"]; QR = RM["ROWMAP"]["Q"]; CRM = RM["ROWMAP"]["Credit"]; K = CRM["K"]
 VR = RM["ROWMAP"]["Val"]["VR"]; VS = RM["ROWMAP"]["Val"]["VS"]; RC = RM["ROWMAP"]["Recon"]; SE = RM["ROWMAP"]["Sens"]
