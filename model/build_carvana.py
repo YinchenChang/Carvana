@@ -17,7 +17,7 @@ OVR = json.loads(os.environ.get("SENS_OVR", "{}"))
 F = json.load(open(os.path.join(HERE, "data", "carvana_facts_20261029.json"), encoding="utf-8"))
 SENS_F = os.path.join(HERE, "data", "sens_v02.json")
 SENS = json.load(open(SENS_F, encoding="utf-8")) if (os.path.exists(SENS_F) and not OVR) else None
-VERSION = "0.2"
+VERSION = "0.2.1"
 BUILD_DATE = "2026-10-29"
 
 BLUE = Font(color="0000FF"); BOLD = Font(bold=True); HDR = PatternFill("solid", fgColor="DDEBF7")
@@ -74,7 +74,7 @@ ABS = "Carvana Auto Receivables Trust 2026-P3 公開說明書 424B5（2026-08-20
 FACTS = "carvana/data/carvana_facts_20261029.json"
 
 sec("A. 股價、股數")
-inp("px", "現價（2026-10-28 收盤，推得）", "US$", None, 59.03, None, "Derived", "StockStory（2026-10-28）：財報公布後上漲 8.4% 至 63.99 → 收盤約 63.99 ÷ 1.084＝59.03", "盤後 63.99；2026-10-26 收盤 56.61（stockanalysis）")
+inp("px", "現價（2026-10-28 盤後）", "US$", None, 63.99, None, "Interested-party", "StockStory（2026-10-28）：Q3 財報公布後盤後上漲 8.4% 至 63.99", "Andy 2026-10-29 指定用盤後價；推得收盤約 59.03；2026-10-26 收盤 56.61（stockanalysis）")
 inp("sh_fx", "完全轉換股數（LLC 單位全數交換＋其他稀釋）", "百萬股", None, 1127, None, "Interested-party", PR2 + " 第 1 頁：Assuming full conversion … 1.127 billion shares", "A 類流通 719.0 百萬股＋B 類 380.5 百萬股（B 類為表決權股；經濟權益以 LLC 單位交換計）")
 
 sec("B. 命題：零售台數路徑")
@@ -803,7 +803,7 @@ V.cell(rv, 1, "機率加權市場隱含報酬率（IRR）"); V.cell(rv, 2, "%");
 rv += 1
 VR["res_hdr"] = rv; hdr(V, rv, ["結論", "單位", "值", "", "說明"]); rv += 1
 res = [("tp", "加權目標價", "US$", f"=SUMPRODUCT(C{VR['s_tp']}:E{VR['s_tp']},C{VR['prob']}:E{VR['prob']})", "0.00", "情境 25／50／25"),
-       ("px", "現價（2026-10-28 收盤，推得）", "US$", "=px", "0.00", ""),
+       ("px", "現價（2026-10-28 盤後）", "US$", "=px", "0.00", ""),
        ("up", "上檔空間（加權目標價 ÷ 現價 − 1）", "%", f"=C{rv}/C{rv+1}-1", "+0.0%;-0.0%", ""),
        ("dcf_w", "加權每股價值：DCF", "US$", f"=SUMPRODUCT(C{VR['s_dcf']}:E{VR['s_dcf']},C{VR['prob']}:E{VR['prob']})", "0.00", ""),
        ("mult_w", "加權每股價值：倍數法", "US$", f"=SUMPRODUCT(C{VR['s_mult']}:E{VR['s_mult']},C{VR['prob']}:E{VR['prob']})", "0.00", ""),
@@ -930,7 +930,7 @@ RM["A8"] = (f'="④ 消費信用：管理組合年化淨沖銷率 2026 上半年
 RM["A9"] = (f'="⑤ 估值：加權目標價 "&TEXT(v_tp_w,"0.0")&" 美元，相對現價 "&TEXT(v_up,"+0%;-0%")&"（"&Val!C{VR["rec"]}&"）；市場隱含 2030 年須有約 "&TEXT(Val!C{VR["req_u"]}/10000,"0")&" 萬台零售量（以情境 B 每台 EBITDA 換算；情境 B 為 "&TEXT(Thesis!{yc(2030)}{R["B"]["u"]}/10000,"0")&" 萬台）。三情境 IRR 機率加權 "&TEXT(v_irr_w,"0.0%")&"，低於 WACC "&TEXT(v_wacc,"0.0%")&"——結論取決於折現率。"')
 RM["A11"] = "工作表：README → In（輸入）→ Q（事實總帳）→ Thesis（命題：台數 × 單位經濟）→ PL（營收線 → 損益）→ CF（收支模組、債務表）→ Credit（信用風險七節）→ Val（DCF＋倍數）→ Recon（對帳）→ Sens（敏感度）→ Sources"
 RM["A12"] = "會計年度＝曆年；金額百萬美元；每台金額美元。FY2026E＝前三季實績＋第四季模型（v0.2 起）；公司自 Q4 2026 起不再提供季度與年度指引，2027 年起改以 GAAP 指標（中期目標：300 萬台、營業利益率 12.5%，2030–2035）"
-RM["A15"] = "v0.1 → v0.2（2026-10-29）：納入 Q3 2026 實績（台數 217,385，高於共識 3.4%；零售 GPU 3,556 高於共識、批發 GPU 708 低於共識、其他 GPU 2,733 持平；SG&A 805 偏高）；2026 年改為前三季實績＋Q4 模型；債務表改為實際（定期貸款 B 1,660 以利率交換固定 4.055% 至 2028-07、2030 年票據已以溢價 50 贖回、車隊融資 142）；SG&A 變動成本 2,700 → 2,900；出售貸款存續期間 1.8 → 2.0（貸款池模擬）；現價改為 2026-10-28 收盤（推得）59.03；TTM 改為 Q4 2025–Q3 2026"
+RM["A15"] = "v0.1 → v0.2（2026-10-29）：納入 Q3 2026 實績（台數 217,385，高於共識 3.4%；零售 GPU 3,556 高於共識、批發 GPU 708 低於共識、其他 GPU 2,733 持平；SG&A 805 偏高）；2026 年改為前三季實績＋Q4 模型；債務表改為實際（定期貸款 B 1,660 以利率交換固定 4.055% 至 2028-07、2030 年票據已以溢價 50 贖回、車隊融資 142）；SG&A 變動成本 2,700 → 2,900；出售貸款存續期間 1.8 → 2.0（貸款池模擬）；現價改為 2026-10-28 盤後 63.99（v0.2.1，Andy 指定）；TTM 改為 Q4 2025–Q3 2026"
 RM["A13"] = "營收分部層：Carvana 只有一個應報導部門（10-Q 附註 2）；營收列採公司固定揭露的三條營收線（零售、批發、其他），其他營收下拆「貸款出售利得」與「非貸款」兩個命題子列，PL 頁核對列為 0"
 RM["A14"] = "與專案既有模型的關係：比照 company-models 的 Oracle v0.4（命題＋分部架構、五級評等、DCF 50%＋倍數 50%、rf 5.00%）與 CoreWeave 收支模型「Backlog 不是現金」的收支精神；本模型不讀 Tokenomics（Carvana 與算力無關）"
 RM["A16"] = "已知限制"

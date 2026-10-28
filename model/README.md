@@ -3,8 +3,8 @@
 命題＋營收線＋收支平衡＋信用風險。Excel 是計算事實的來源（全部活公式），HTML 只負責呈現。
 
 ## 成品
-- `dist/20261029_Carvana個股模型_v0.2.xlsx`：工作表 README → In → Q → Thesis → PL → CF → Credit → Val → Recon → Sens → Sources
-- `dist/20261029_Carvana個股模型_v0.2.html`：單頁自含展示層（每個數字標註來源儲存格）
+- `dist/20261029_Carvana個股模型_v0.2.1.xlsx`：工作表 README → In → Q → Thesis → PL → CF → Credit → Val → Recon → Sens → Sources
+- `dist/20261029_Carvana個股模型_v0.2.1.html`：單頁自含展示層（每個數字標註來源儲存格）
 
 ## 建置
 ```
