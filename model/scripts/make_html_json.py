@@ -1,10 +1,10 @@
-# 由建置列號對照（data/rowmap_v01.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
+# 由建置列號對照（data/rowmap_v02.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
 # 設定檔文字不得含阿拉伯數字（年度、日期除外）；所有數字以儲存格參照取自 xlsx。
 import json, os
 from openpyxl.utils import get_column_letter
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RM = json.load(open(os.path.join(HERE, "data", "rowmap_v01.json"), encoding="utf-8"))
+RM = json.load(open(os.path.join(HERE, "data", "rowmap_v02.json"), encoding="utf-8"))
 R, P, C = RM["R"], RM["P"], RM["C"]
 IN = RM["ROWMAP"]["In"]; QR = RM["ROWMAP"]["Q"]; CRM = RM["ROWMAP"]["Credit"]; K = CRM["K"]
 VR = RM["ROWMAP"]["Val"]["VR"]; VS = RM["ROWMAP"]["Val"]["VS"]; RC = RM["ROWMAP"]["Recon"]; SE = RM["ROWMAP"]["Sens"]
@@ -26,6 +26,13 @@ def inrow(k, fmt, derived_label, derived_ref):
     return [f"@In!B{r}", [f"@In!E{r}|{fmt}", " ", f"@In!C{r}"], f"@In!G{r}|tag", [derived_label, derived_ref]]
 
 
+LAST = str(max(int(k) for k in RC))
+import openpyxl as _ox
+_wb = _ox.load_workbook(os.path.join(HERE, "dist", sorted(x for x in os.listdir(os.path.join(HERE, "dist")) if x.endswith(".xlsx"))[-1]), data_only=True)
+RFMT = {}
+for _k, _r in RC.items():
+    _u = _wb["Recon"][f"B{_r}"].value
+    RFMT[str(_r)] = {c: {"US$M": "n0", "輛": "n0", "US$": "n0", "%": "p1", "x": "n2"}.get(_u, "n2") for c in "CDE"}
 B = R["B"]; PB = P["B"]; CB = C["B"]; KB = K["B"]; S1 = CRM["S1"]; S2 = CRM["S2"]; S3 = CRM["S3"]; S4 = CRM["S4"]; S5 = CRM["S5"]; S6 = CRM["S6"]
 fmt_th = {}
 for k in ("g", "gos_m"):
@@ -53,7 +60,7 @@ cfg = {
         ]},
         {"id": "drivers", "title": "驅動因子 → 推導量（單位經濟）", "blocks": [
             {"type": "table", "head": ["輸入", "基準值", "標記", "推導量"], "rows": [
-                inrow("u_q3", "n0", "FY2026 零售台數（情境 B）：", f"@Thesis!{yc(2026)}{B['u']}|n0"),
+                inrow("q4_seq", "p1", "FY2026 零售台數（情境 B）：", f"@Thesis!{yc(2026)}{B['u']}|n0"),
                 inrow("g27_B", "p1", "FY2027 零售台數（情境 B）：", f"@Thesis!{yc(2027)}{B['u']}|n0"),
                 inrow("gpr27_B", "n0", "FY2027 零售毛利（情境 B，百萬美元）：", f"@Thesis!{yc(2027)}{B['gp_ret']}|n0"),
                 inrow("gos27_B", "p2", "FY2027 貸款出售利得（情境 B，百萬美元）：", f"@Thesis!{yc(2027)}{B['gos']}|n0"),
@@ -162,9 +169,9 @@ cfg = {
         ]},
         {"id": "recon", "title": "對帳：公司指引、共識、評等機構、放空報告", "blocks": [
             {"type": "table", "head": [f"@Recon!{c}3" for c in "ABCDEFG"],
-             "rowgen": {"sheet": "Recon", "rows": f"{RC['0']}-{RC['9']}", "cols": list("ABCDEFG"), "fmts": ["", "", "n2", "n2", "n2", "", "tag"],
-                        "row_fmt": {**{str(RC[str(i)]): {c: "n0" for c in "CDE"} for i in (0, 1, 2, 3)}, **{str(RC["7"]): {c: "p1" for c in "CDE"}}}}},
-            {"type": "note", "parts": [f"@Recon!A{RC['9'] + 2}"]},
+             "rowgen": {"sheet": "Recon", "rows": f"{RC['0']}-{RC[LAST]}", "cols": list("ABCDEFG"), "fmts": ["", "", "n2", "n2", "n2", "", "tag"],
+                        "row_fmt": RFMT}},
+            {"type": "note", "parts": [f"@Recon!A{RC[LAST] + 2}"]},
             {"type": "note", "parts": ["@Recon!A1"]},
         ]},
         {"id": "sens", "title": "敏感度", "blocks": [
