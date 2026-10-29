@@ -1,10 +1,10 @@
-# 由建置列號對照（data/rowmap_v031.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
+# 由建置列號對照（data/rowmap_v032.json）產生 carvana/html.json（共用產生器 tools/company_html 的設定檔）。
 # 設定檔文字不得含阿拉伯數字（年度、日期除外）；所有數字以儲存格參照取自 xlsx。
 import json, os
 from openpyxl.utils import get_column_letter
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RM = json.load(open(os.path.join(HERE, "data", "rowmap_v031.json"), encoding="utf-8"))
+RM = json.load(open(os.path.join(HERE, "data", "rowmap_v032.json"), encoding="utf-8"))
 R, P, C = RM["R"], RM["P"], RM["C"]
 IN = RM["ROWMAP"]["In"]; QR = RM["ROWMAP"]["Q"]; CRM = RM["ROWMAP"]["Credit"]; K = CRM["K"]
 VR = RM["ROWMAP"]["Val"]["VR"]; VS = RM["ROWMAP"]["Val"]["VS"]; RC = RM["ROWMAP"]["Recon"]; SE = RM["ROWMAP"]["Sens"]
@@ -33,6 +33,12 @@ RFMT = {}
 for _k, _r in RC.items():
     _u = _wb["Recon"][f"B{_r}"].value
     RFMT[str(_r)] = {c: {"US$M": "n0", "輛": "n0", "US$": "n0", "%": "p1", "x": "n2"}.get(_u, "n2") for c in "CDE"}
+TS = RM["ROWMAP"]["Thesis"]
+TFMT = {}
+for _r in list(range(TS["hdr"] + 1, TS["in_end"] + 1)) + list(range(TS["der_start"], TS["end"] + 1)):
+    _u = _wb["Thesis"][f"B{_r}"].value
+    _lab = str(_wb["Thesis"][f"A{_r}"].value or "")
+    TFMT[str(_r)] = {c: ("p2" if "利得率" in _lab else "p1") if _u == "%" else "n0" for c in "CDE"}
 B = R["B"]; PB = P["B"]; CB = C["B"]; KB = K["B"]; S1 = CRM["S1"]; S2 = CRM["S2"]; S3 = CRM["S3"]; S4 = CRM["S4"]; S5 = CRM["S5"]; S6 = CRM["S6"]
 fmt_th = {}
 for k in ("g", "gos_m"):
@@ -70,6 +76,9 @@ cfg = {
                 inrow("dspr_C", "p1", "情境 C 利差傳導（利得率）：", f"@Credit!C{S2['d']}|p2"),
                 inrow("ally_cap", "n0", "已承諾去化 ÷ FY2027 發放（情境 B）：", f"@Credit!{yc(2027)}{KB['take']}|p0"),
             ]},
+            {"type": "table", "caption": f"@Thesis!A{TS['start']}", "grid": True, "head": [f"@Thesis!{c}{TS['hdr']}" for c in "ABCDEF"],
+             "rowgen": {"sheet": "Thesis", "rows": f"{TS['hdr'] + 1}-{TS['in_end']},{TS['der_start']}-{TS['end']}", "cols": list("ABCDEF"), "fmts": ["", "", "n0", "n0", "n0", "tag"],
+                        "row_fmt": TFMT}},
             {"type": "table", "caption": "命題模組：零售台數 × 每台單位經濟（情境 B）", "grid": True,
              "head": [f"@Thesis!A{B['hdr']}", f"@Thesis!B{B['hdr']}"] + [f"@Thesis!{c}{B['hdr']}" for c in [yc(2025)] + YC],
              "rowgen": {"sheet": "Thesis", "rows": f"{B['g']}-{B['gcx']}", "cols": ["A", "B", yc(2025)] + YC, "fmts": ["", ""] + ["n0"] * (len(YC) + 1),

@@ -15,9 +15,9 @@ from openpyxl.utils import get_column_letter
 HERE = os.path.dirname(os.path.abspath(__file__))
 OVR = json.loads(os.environ.get("SENS_OVR", "{}"))
 F = json.load(open(os.path.join(HERE, "data", "carvana_facts_20261029.json"), encoding="utf-8"))
-SENS_F = os.path.join(HERE, "data", "sens_v031.json")
+SENS_F = os.path.join(HERE, "data", "sens_v032.json")
 SENS = json.load(open(SENS_F, encoding="utf-8")) if (os.path.exists(SENS_F) and not OVR) else None
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 BUILD_DATE = "2026-10-29"
 
 BLUE = Font(color="0000FF"); BOLD = Font(bold=True); HDR = PatternFill("solid", fgColor="DDEBF7")
@@ -439,6 +439,41 @@ for s in SC:
     TBLK[s] = (r0, row)
     row += 2
 
+# 三情境假設對照（Thesis 頁底；HTML「驅動因子」章用）
+SCMP = {"start": row}
+TH.cell(row, 1, "三情境假設對照：輸入（藍字在 In 頁）與推導量").font = BOLD; row += 1
+hdr(TH, row, ["項目", "單位", "情境 A（樂觀）", "情境 B（基準）", "情境 C（信用壓力）", "標記"]); SCMP["hdr"] = row; row += 1
+cmp_in = [("2027 年零售台數年增", "%", "g27_{s}", "0.0%"), ("2028 年零售台數年增", "%", "g28_{s}", "0.0%"), ("2030 年零售台數年增", "%", "g30_{s}", "0.0%"),
+          ("2035 年零售台數年增", "%", "g35_{s}", "0.0%"), ("2027 年零售毛利／台", "US$", "gpr27_{s}", "#,##0"), ("2030 年起零售毛利／台", "US$", "gprLT_{s}", "#,##0"),
+          ("2027 年批發毛利／零售台", "US$", None, "#,##0"), ("2027 年貸款出售利得率", "%", "gos27_{s}", "0.00%"), ("2030 年起貸款出售利得率", "%", "gosLT_{s}", "0.00%"),
+          ("變動 SG&A／台每年下降", "%", "eff_{s}", "0.0%"), ("2027 年存貨天數", "天", None, "0")]
+for lab, u, key, fmt in cmp_in:
+    TH.cell(row, 1, lab); TH.cell(row, 2, u)
+    for j, s_ in enumerate(SC):
+        if key:
+            f = "=" + key.format(s=s_)
+        elif "批發" in lab:
+            f = "=gpw27_C" if s_ == "C" else "=gpw_h2"
+        else:
+            f = "=inv_d_C" if s_ == "C" else "=inv_d"
+        c = TH.cell(row, 3 + j, f); c.number_format = fmt
+    TH.cell(row, 6, "Assumed；C 為 Derived" if key and key.startswith("gos27") else "Assumed")
+    row += 1
+SCMP["in_end"] = row - 1
+TH.cell(row, 1, "推導量").font = BOLD; row += 1
+SCMP["der_start"] = row
+cmp_der = [("2027 年零售台數", "輛", "u", 2027, "#,##0"), ("2030 年零售台數", "輛", "u", 2030, "#,##0"), ("2035 年零售台數", "輛", "u", 2035, "#,##0"),
+           ("2027 年總毛利／台", "US$", "gpu", 2027, "#,##0"), ("2027 年貸款出售利得", "US$M", "gos", 2027, "#,##0"), ("2027 年 SG&A／台", "US$", "sga_pu", 2027, "#,##0")]
+for lab, u, k, y, fmt in cmp_der:
+    TH.cell(row, 1, lab); TH.cell(row, 2, u)
+    for j, s_ in enumerate(SC):
+        TH.cell(row, 3 + j, f"={yc(y)}{R[s_][k]}").number_format = fmt
+    TH.cell(row, 6, "Derived"); row += 1
+SCMP["pl_rows"] = row  # 之後補 PL 推導量（調整後 EBITDA 2027、2030）
+row += 3
+SCMP["end"] = row - 1
+ROWMAP["Thesis"] = SCMP
+
 # =====================================================================================
 # PL — 營收線 → 合併 → 損益（官方：單一應報導部門；營收線三條為公司固定揭露口徑）
 # =====================================================================================
@@ -492,6 +527,13 @@ PL["A4"].font = BOLD
 for col in [yc(y) for y in YRS]:
     PL[f"{col}5"] = "=" + "+".join(f"ABS({col}{P[s]['rev_ret']}+{col}{P[s]['rev_whs']}+{col}{P[s]['rev_oth']}-{col}{P[s]['rev']})" for s in SC)
     PL[f"{col}6"] = "=" + "+".join(f"ABS({col}{P[s]['sub_gos']}+{col}{P[s]['sub_nl']}-{col}{P[s]['rev_oth']})" for s in SC)
+
+for i, (lab, y, k, fmt) in enumerate((("2027 年調整後 EBITDA", 2027, "ebitda", "#,##0"), ("2030 年調整後 EBITDA", 2030, "ebitda", "#,##0"), ("2030 年調整後 EBITDA 率", 2030, "ebitda_m", "0.0%"))):
+    r_ = SCMP["pl_rows"] + i
+    TH.cell(r_, 1, lab); TH.cell(r_, 2, "%" if fmt.endswith("%") else "US$M")
+    for j, s_ in enumerate(SC):
+        TH.cell(r_, 3 + j, f"=PL!{yc(y)}{P[s_][k]}").number_format = fmt
+    TH.cell(r_, 6, "Derived")
 
 # =====================================================================================
 # CF — 收支模組：現金流、債務表、利息、收支關卡
@@ -862,7 +904,7 @@ ROWMAP["Recon"] = RCR
 RC.column_dimensions["A"].width = 60
 
 # =====================================================================================
-# Sens — 敏感度（建置時完整重算；scripts/sens.py 產生 data/sens_v031.json）
+# Sens — 敏感度（建置時完整重算；scripts/sens.py 產生 data/sens_v032.json）
 # =====================================================================================
 SE = wb.create_sheet("Sens")
 SE["A1"] = "Sens — 一次動一個輸入（低／高），完整重算整本模型；輸出：加權目標價、情境 B 2027 年債務／EBITDA、情境 C 收支關卡（FY2027–FY2031 合計）"

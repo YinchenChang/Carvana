@@ -476,6 +476,14 @@
    "ttm_cov": 60,
    "ttm_gosrp": 61
   },
+  "Thesis": {
+   "start": 85,
+   "hdr": 86,
+   "in_end": 97,
+   "der_start": 99,
+   "pl_rows": 105,
+   "end": 107
+  },
   "Credit": {
    "K": {
     "A": {
