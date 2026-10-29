@@ -1,12 +1,12 @@
 # 敏感度：一次動一個輸入（低／高），以 SENS_OVR 完整重建並用 LibreOffice 重算，讀回三個輸出。
-# 用法：python3 carvana/scripts/sens.py --jobs 6   → 寫 carvana/data/sens_v031.json（再建置一次時寫入 Sens 頁）
+# 用法：python3 carvana/scripts/sens.py --jobs 6   → 寫 carvana/data/sens_v032.json（再建置一次時寫入 Sens 頁）
 import argparse, json, os, subprocess, sys, tempfile, shutil
 from concurrent.futures import ThreadPoolExecutor
 import openpyxl
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD = os.path.join(HERE, "build_carvana.py")
-OUT = os.path.join(HERE, "data", "sens_v031.json")
+OUT = os.path.join(HERE, "data", "sens_v032.json")
 KEYS = ["q4_seq", "g27_B", "g28_B", "g30_B", "g35_B", "gpr27_B", "gprLT_B", "gos27_B", "gosLT_B", "sga_fix", "sga_var", "eff_B", "capcost", "util",
         "dcnl_C", "dspr_C", "dur", "etr_30", "ctr", "tra_yrs", "beta", "g_tv", "prem", "inv_d", "refi_sp", "gprLT_C", "gosLT_C", "asp_g"]
 
